@@ -1,26 +1,18 @@
 import { Module } from '@nestjs/common';
 import { ConfigModule } from '@nestjs/config';
-import { ClientsModule, Transport } from '@nestjs/microservices';
+import { HttpModule } from '@nestjs/axios';
+import { OrdersModule } from './orders/orders.module';
 import appConfig from './config/app.config';
 
 @Module({
   imports: [
+    HttpModule,
     ConfigModule.forRoot({
       envFilePath: `.env.${process.env.NODE_ENV}`,
       isGlobal: true,
       load: [appConfig],
     }),
-    ClientsModule.register([
-      {
-        name: 'KITCHEN_SERVICE',
-        transport: Transport.RMQ,
-        options: {
-          urls: ['amqp://rabbitmq:5672'],
-          queue: 'kitchen_queue',
-          queueOptions: { durable: false },
-        },
-      },
-    ]),
+    OrdersModule,
   ],
 })
 export class AppModule {}
