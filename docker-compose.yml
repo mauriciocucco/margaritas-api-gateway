@@ -1,7 +1,7 @@
 version: '3.8'
 
 services:
-  app:
+  api_gateway_app:
     build:
       context: .
       dockerfile: Dockerfile
@@ -13,3 +13,9 @@ services:
       - .:/app
       - /app/node_modules
     command: npm run start:dev
+    networks:
+      - external_network
+
+networks:
+  external_network:
+    external: true

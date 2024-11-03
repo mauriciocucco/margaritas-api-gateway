@@ -2,30 +2,33 @@ import {
   Controller,
   Post,
   Body,
-  InternalServerErrorException,
+  Get,
+  Param,
+  Query,
+  ParseArrayPipe,
+  UsePipes,
 } from '@nestjs/common';
 import { OrdersService } from '../orders/orders.service';
 import { DispatchOrderDto } from './dtos/dispatch-order.dto';
+import { GetOrdersDto } from './dtos/get-orders.dto';
 
 @Controller('orders')
 export class OrdersController {
   constructor(private readonly orderService: OrdersService) {}
 
   @Post()
-  async dispatchOrder(
-    @Body() dispatchOrderDto: DispatchOrderDto,
-  ): Promise<any> {
-    const response = await this.orderService.dispatchOrder(dispatchOrderDto);
+  @UsePipes(new ParseArrayPipe({ items: DispatchOrderDto }))
+  async dispatchOrder(@Body() dispatchOrdersDto: DispatchOrderDto[]) {
+    return await this.orderService.dispatchBulkOrders(dispatchOrdersDto);
+  }
 
-    if ('error' in response) {
-      throw new InternalServerErrorException(response);
-    }
+  @Get()
+  async getAllOrders(@Query() getOrdersDto?: GetOrdersDto) {
+    return this.orderService.getAllOrders(getOrdersDto);
+  }
 
-    return {
-      ...response,
-      metadata: {
-        timestamp: new Date().toISOString(),
-      },
-    };
+  @Get(':id')
+  async getOrderById(@Param('id') id: string) {
+    return this.orderService.getOrderById(id);
   }
 }

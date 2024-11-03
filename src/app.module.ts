@@ -3,6 +3,8 @@ import { ConfigModule } from '@nestjs/config';
 import { HttpModule } from '@nestjs/axios';
 import { OrdersModule } from './orders/orders.module';
 import appConfig from './config/app.config';
+import { WarehouseModule } from './warehouse/warehouse.module';
+import { KitchenModule } from './kitchen/kitchen.module';
 
 @Module({
   imports: [
@@ -13,6 +15,8 @@ import appConfig from './config/app.config';
       load: [appConfig],
     }),
     OrdersModule,
+    WarehouseModule,
+    KitchenModule,
   ],
 })
 export class AppModule {}
