@@ -1,5 +1,6 @@
-import { Controller, Get } from '@nestjs/common';
+import { Controller, Get, Query } from '@nestjs/common';
 import { WarehouseService } from './warehouse.service';
+import { GetPurchaseHistoryDto } from './dtos/get-purchase-history.dto';
 
 @Controller('warehouse')
 export class WarehouseController {
@@ -11,7 +12,9 @@ export class WarehouseController {
   }
 
   @Get('purchase-history')
-  async getPurchaseHistory() {
-    return this.warehouseService.getPurchaseHistory();
+  async getPurchaseHistory(
+    @Query() getPurchaseHistoryDto?: GetPurchaseHistoryDto,
+  ) {
+    return this.warehouseService.getPurchaseHistory(getPurchaseHistoryDto);
   }
 }

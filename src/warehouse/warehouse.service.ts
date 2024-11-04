@@ -2,6 +2,8 @@ import { Injectable, InternalServerErrorException } from '@nestjs/common';
 import { firstValueFrom } from 'rxjs';
 import { HttpService } from '@nestjs/axios';
 import { ConfigService } from '@nestjs/config';
+import { GetPurchaseHistoryDto } from './dtos/get-purchase-history.dto';
+import * as qs from 'qs';
 
 @Injectable()
 export class WarehouseService {
@@ -35,12 +37,16 @@ export class WarehouseService {
     }
   }
 
-  async getPurchaseHistory() {
+  async getPurchaseHistory(getPurchaseHistoryDto?: GetPurchaseHistoryDto) {
     try {
+      const queryString = qs.stringify(getPurchaseHistoryDto);
       const response = await firstValueFrom(
-        this.httpService.get(this.warehouseServiceUrl + '/purchase-history', {
-          headers: { [this.apiHeader]: this.apiKey },
-        }),
+        this.httpService.get(
+          `${this.warehouseServiceUrl}/purchase-history?${queryString}`,
+          {
+            headers: { [this.apiHeader]: this.apiKey },
+          },
+        ),
       );
       return response.data;
     } catch (error) {
